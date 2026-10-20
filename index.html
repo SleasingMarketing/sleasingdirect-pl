@@ -30,6 +30,7 @@ img{max-width:100%}
 .tiles{max-width:var(--wrap);margin:0 auto;padding:clamp(20px,4vw,44px) var(--gut) clamp(18px,3vw,34px);display:flex;justify-content:center;gap:clamp(14px,3vw,32px)}
 .tile{all:unset;box-sizing:border-box;cursor:pointer;text-align:center;flex:0 1 268px;min-width:0;-webkit-tap-highlight-color:transparent}
 .tile .box{display:flex;align-items:center;justify-content:center;aspect-ratio:268/215;border-radius:12px;background:var(--card)}
+.tile[data-p=apple] .box{background:#cccccc}
 .tile[data-p=android] .box{background:var(--green)}
 .tile svg{width:48%;height:auto;fill:#fff}
 .tile .cap{display:block;margin-top:12px;font-size:clamp(14px,2.4vw,20px);color:#444}
@@ -41,6 +42,7 @@ body.compact .stickybar{box-shadow:0 6px 12px -8px rgba(0,0,0,.25)}
 .compact-nav{display:none;gap:10px;justify-content:center;padding:10px var(--gut) 10px;max-width:var(--wrap);margin:0 auto}
 body.compact .compact-nav{display:flex}
 .pillsel{all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;flex:1 1 0;max-width:270px;height:46px;border-radius:10px;background:var(--card);color:#4a4a4a;font:500 clamp(13px,2.2vw,18px)/1 "Noto Sans Thai",sans-serif;-webkit-tap-highlight-color:transparent}
+.pillsel[data-p=apple]{background:#cccccc}
 .pillsel[data-p=android]{background:var(--green);color:#fff}
 .pillsel svg{width:26px;height:26px;fill:#fff;flex:none}
 .pillsel:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
