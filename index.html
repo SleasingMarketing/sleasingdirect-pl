@@ -282,6 +282,7 @@ function parseSheet(csv, key) {
     var price = num(r[iP]);
     if (!name || price == null || price <= 0) return;      // ข้ามหัวตาราง/แถวว่าง
     if (name.charAt(0) === '*') return;                    // * = รุ่นที่ยังไม่วางขาย
+    if (!/[A-Za-z\u0E00-\u0E7F]/.test(name)) return;      // ชื่อที่ไม่มีตัวอักษร (เช่น แถวอัตราดอกเบี้ย "1.15%") ไม่ใช่รุ่นสินค้า
     var plans = cfg.blocks.map(function (b) {
       var i0 = colIdx(b.inst);
       return {
@@ -386,7 +387,6 @@ function filtered() {
   if (state.platform) src = state.data[state.platform] || [];
   else if (q) src = (state.data.apple || []).concat(state.data.android || []);
   else return null;
-  if (state.platform === 'android' && state.brand) src = src.filter(function (x) { return x.brand === state.brand; });
   if (q) {
     var toks = q.split(/\s+/).filter(Boolean);
     src = src.filter(function (x) {
@@ -423,7 +423,7 @@ function render() {
 }
 
 function buildBrands() {
-  var show = state.platform === 'android' && state.data.android;
+  var show = false; // ไม่ใช้ตัวกรองแบรนด์ แสดงสินค้าทั้งหมด
   brandEl.hidden = !show;
   if (!show) return;
   var seen = [], items = state.data.android;
