@@ -192,7 +192,7 @@ table.pt{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
 var SHEETS = {
   apple: {
     label: 'Apple',
-    url: 'ใส่ลิงก์ CSV ของชีต Apple',
+    url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ6_f3PseqZqDa1ympgfWpmwIRAcPMDkCbCKXYt_9QmF75_Usohwa9KCa54F0ZnamS1ZB3FXUF71bBS/pub?gid=821566101&single=true&output=csv',
     nameCol: 'B', priceCol: 'C', imageCol: 'A',   // คอลัมน์ A = ชื่อไฟล์รูป (เช่น 1 → 1.jpg)
     colors: { start: 'BH', pairs: 5 },            // สี: [รหัสสี, ชื่อสี] × 5 เริ่มที่คอลัมน์ BH (BH–BQ)
     terms: [6, 9, 12, 15, 18, 24],
@@ -268,6 +268,7 @@ function splitName(name, key) {
   var spec = m[2].replace(/\s+/g, ' ').trim();
   if (/^\d+\s*\/\s*\d+$/.test(spec)) spec += ' GB';
   spec = spec.replace(/TB GB$/i, 'TB');
+  spec = spec.replace(/(\d)\s*(GB|TB)\b/gi, function (m, d, u) { return d + ' ' + u.toUpperCase(); }); // 256GB -> 256 GB
   return { title: m[1].trim(), spec: spec };
 }
 
