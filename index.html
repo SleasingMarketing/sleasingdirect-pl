@@ -113,7 +113,9 @@ table.pt{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
 .pt td{text-align:center;font-size:clamp(11px,1.9vw,18.5px);padding:clamp(4px,.9vw,6px) 3px;white-space:nowrap}
 .pt tbody tr:first-child td{padding-top:clamp(8px,1.4vw,14px)}
 .pt tbody tr:last-child td{padding-bottom:clamp(8px,1.4vw,14px)}
-.pt td.price{font-size:clamp(14px,2.6vw,26px);font-weight:500;vertical-align:middle}
+.pt td.price{font-size:clamp(14px,2.6vw,26px);font-weight:500;vertical-align:middle;white-space:normal}
+.pt td.price .ins{display:block;margin-top:3px;font-size:clamp(9px,1.2vw,12px);font-weight:400;color:#555;line-height:1.3}
+.insnote{display:none}
 .pt td.down{text-align:left;white-space:nowrap;padding-left:clamp(4px,1.2vw,14px)}
 .pct{display:inline-block;min-width:2.5em;margin-right:6px;padding:0 5px;border-radius:5px;background:#8d8d8d;color:#fff;font-size:.56em;font-weight:600;line-height:1.5;text-align:center;vertical-align:.18em}
 .pt td.m{color:#333}
@@ -153,6 +155,7 @@ table.pt{table-layout:fixed}
   .title{font-size:19px;margin-bottom:4px}
   .pricebadge{display:inline-block;background:#fff;border-radius:999px;padding:3px 12px;font-size:13px;color:#555}
   .pricebadge b{font-size:16px;color:#222;margin-left:4px;font-weight:600}
+  .insnote{display:block;margin:4px 0 0 4px;font-size:11px;color:#666;line-height:1.3}
   .pt th.c-price,.pt td.price{display:none}
   .pt th.c-down{width:22%;padding-left:5px}
   .pt td.m{font-size:11px}
@@ -240,7 +243,8 @@ var SHEETS = {
   apple: {
     label: 'Apple',
     url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ6_f3PseqZqDa1ympgfWpmwIRAcPMDkCbCKXYt_9QmF75_Usohwa9KCa54F0ZnamS1ZB3FXUF71bBS/pub?gid=821566101&single=true&output=csv',
-    nameCol: 'B', priceCol: 'C', imageCol: 'A',   // คอลัมน์ A = ชื่อไฟล์รูป (เช่น 1 → 1.jpg)
+    nameCol: 'B', priceCol: 'C', imageCol: 'A', insCol: 'D',   // insCol = ราคาประกันตัวเครื่อง
+      // คอลัมน์ A = ชื่อไฟล์รูป (เช่น 1 → 1.jpg)
     colors: { start: 'BH', pairs: 5 },            // สี: [รหัสสี, ชื่อสี] × 5 เริ่มที่คอลัมน์ BH (BH–BQ)
     terms: [6, 9, 12, 15, 18, 24],
     blocks: [ // pct = % เงินดาวน์ | down = คอลัมน์เงินดาวน์ | inst = คอลัมน์ค่างวดแรก (งวดที่ 6)
@@ -254,7 +258,8 @@ var SHEETS = {
   android: {
     label: 'Android',
     url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRVzhwwWQrZkYvNrvMY2wmATJIT7rZ46SYhnDPtVYfTxEuzsou6cARs0cFYxHChkg/pub?gid=456398800&single=true&output=csv',
-    nameCol: 'A', priceCol: 'B', imageCol: 'C',   // คอลัมน์ C = image link (เช่น 161 → 161.jpg)
+    nameCol: 'A', priceCol: 'B', imageCol: 'C', insCol: 'D',   // insCol = ราคาประกันตัวเครื่อง
+      // คอลัมน์ C = image link (เช่น 161 → 161.jpg)
     colors: { start: 'AY', pairs: 5 },            // สี: AY–BH (ต่อจากบล็อกดาวน์ 40% ที่จบที่ AX)
     terms: [6, 9, 12, 15, 18],
     blocks: [
@@ -337,6 +342,7 @@ function parseSheet(csv, key) {
       };
     });
     var sp = splitName(name, key);
+    var insV = cfg.insCol ? num(r[colIdx(cfg.insCol)]) : null;   // ประกัน: คอลัมน์ D ของแถวนั้น
     var colors = [];
     if (cfg.colors) {
       var c0 = colIdx(cfg.colors.start);
@@ -347,7 +353,7 @@ function parseSheet(csv, key) {
       }
     }
     out.push({
-      key: key, name: name, title: sp.title, spec: sp.spec, price: price, plans: plans, colors: colors,
+      key: key, name: name, title: sp.title, spec: sp.spec, price: price, ins: insV > 0 ? insV : null, plans: plans, colors: colors,
       brand: key === 'android' ? name.split(' ')[0].toUpperCase() : 'APPLE',
       imageKey: iI >= 0 ? cleanKey(r[iI]) : '',
       hay: name.toLowerCase(), hayNS: name.toLowerCase().replace(/\s+/g, '')
@@ -397,8 +403,9 @@ function cardHTML(it) {
   var b = imgBase(it);
   var media = '<img src="' + esc(b + '.' + IMAGE_EXT[0]) + '" data-b="' + esc(b) + '" data-i="0" alt="' + esc(it.title) + '" loading="lazy" decoding="async" onerror="imgFail(this)">';
   var head = '<th class="c-price">ราคา</th><th class="c-down">เงินดาวน์</th>' + terms.map(function (t) { return '<th>' + t + '<span class="u"> เดือน</span></th>'; }).join('');
+  var insText = it.ins ? '+ ประกันตัวเครื่อง ' + Math.round(it.ins).toLocaleString('en-US') + ' .–' : '';
   var body = it.plans.map(function (p, i) {
-    return '<tr>' + (i === 0 ? '<td class="price" rowspan="' + it.plans.length + '">' + Math.round(it.price).toLocaleString('en-US') + '</td>' : '') +
+    return '<tr>' + (i === 0 ? '<td class="price" rowspan="' + it.plans.length + '">' + Math.round(it.price).toLocaleString('en-US') + (insText ? '<span class="ins">' + insText + '</span>' : '') + '</td>' : '') +
       '<td class="down"><span class="pct">' + p.pct + '%</span>' + fmt(p.down) + '</td>' +
       p.inst.map(function (v) { return '<td class="m">' + fmt(v) + '</td>'; }).join('') + '</tr>';
   }).join('');
@@ -408,7 +415,8 @@ function cardHTML(it) {
   }).join('') + '</div>' : '';
   return '<article class="card' + (it.colors.length ? '' : ' nc') + '"><div class="mediacol"><div class="media">' + media + '</div>' + cols + '</div><div class="body"><div class="head">' +
     '<h3 class="title">' + esc(it.title) + (it.spec ? ' <small>(' + esc(it.spec) + ')</small>' : '') + '</h3>' +
-    '<span class="pricebadge">ราคา <b>' + Math.round(it.price).toLocaleString('en-US') + '</b></span></div>' +
+    '<span class="pricebadge">ราคา <b>' + Math.round(it.price).toLocaleString('en-US') + '</b></span>' +
+    (insText ? '<span class="insnote">' + insText + '</span>' : '') + '</div>' +
     '<div class="tcap">ค่างวด (บาท/เดือน) ตามจำนวนงวดที่ผ่อน</div><div class="tw"><table class="pt"><thead><tr>' + head + '</tr></thead><tbody>' + body + '</tbody></table></div></div></article>';
 }
 
