@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>S LEASING — ผ่อนมือถือ ตารางราคา</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#1f4a98; --blue-dark:#183b7a; --green:#3ddc84; --vat1:#5aae1f; --vat2:#8bd23a;
+  --ink:#2b2b2b; --muted:#8a8a8a; --card:#e6e6e6; --th:#4d4d4d; --line:#e3e3e3;
+  --wrap:1190px; --gut:clamp(12px,4vw,47px); --logoH:64px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;font-family:"Noto Sans Thai","LINE Seed Sans TH",system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:#fff;line-height:1.35}
+img{max-width:100%}
+.wrap{max-width:var(--wrap);margin:0 auto}
+
+/* ── โลโก้ (sticky ตลอด) ── */
+.logobar{position:sticky;top:0;z-index:30;background:#fff;border-bottom:1px solid var(--line)}
+.logobar .wrap{display:flex;align-items:center;height:64px;padding:0 clamp(12px,2.5vw,24px)}
+.logobar img{height:48px;width:auto;display:block}
+
+/* ── แบนเนอร์ + ปุ่มใหญ่ ── */
+.hero{max-width:var(--wrap);margin:0 auto}
+.hero img{display:block;width:100%;height:auto}
+.tiles{max-width:var(--wrap);margin:0 auto;padding:clamp(20px,4vw,44px) var(--gut) clamp(18px,3vw,34px);display:flex;justify-content:center;gap:clamp(14px,3vw,32px)}
+.tile{all:unset;box-sizing:border-box;cursor:pointer;text-align:center;flex:0 1 268px;min-width:0;-webkit-tap-highlight-color:transparent}
+.tile .box{display:flex;align-items:center;justify-content:center;aspect-ratio:268/215;border-radius:12px;background:var(--card)}
+.tile[data-p=android] .box{background:var(--green)}
+.tile svg{width:48%;height:auto;fill:#fff}
+.tile .cap{display:block;margin-top:12px;font-size:clamp(14px,2.4vw,20px);color:#444}
+.tile:focus-visible .box{outline:3px solid var(--blue);outline-offset:3px}
+
+/* ── แถบที่ติดบน (เมนูย่อ + แถบสีน้ำเงิน) ── */
+.stickybar{position:sticky;top:var(--logoH);z-index:20;background:#fff;padding-bottom:10px}
+body.compact .stickybar{box-shadow:0 6px 12px -8px rgba(0,0,0,.25)}
+.compact-nav{display:none;gap:10px;justify-content:center;padding:10px var(--gut) 10px;max-width:var(--wrap);margin:0 auto}
+body.compact .compact-nav{display:flex}
+.pillsel{all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;flex:1 1 0;max-width:270px;height:46px;border-radius:10px;background:var(--card);color:#4a4a4a;font:500 clamp(13px,2.2vw,18px)/1 "Noto Sans Thai",sans-serif;-webkit-tap-highlight-color:transparent}
+.pillsel[data-p=android]{background:var(--green);color:#fff}
+.pillsel svg{width:26px;height:26px;fill:#fff;flex:none}
+.pillsel:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.bluebar{display:flex;align-items:center;flex-wrap:wrap;gap:8px 8px;max-width:calc(var(--wrap) - 2*var(--gut) + 0px);margin:0 auto;width:calc(100% - 2*var(--gut));background:var(--blue);border-radius:999px;padding:6px 8px 6px 6px;color:#fff}
+.bp{display:inline-flex;align-items:center;height:26px;padding:0 12px;border-radius:999px;font-size:clamp(12px,1.9vw,15px);font-weight:600;white-space:nowrap;border:1.5px solid rgba(255,255,255,.9)}
+.bp.vat{background:linear-gradient(180deg,var(--vat2),var(--vat1));border-color:transparent;padding:0 20px}
+.search{margin-left:auto;flex:1 1 120px;max-width:260px;display:flex;align-items:center;height:28px;border:1.5px solid rgba(255,255,255,.9);border-radius:999px;padding:0 10px 0 14px;gap:6px}
+.search input{all:unset;flex:1;min-width:0;color:#fff;font-size:clamp(13px,1.9vw,15px);font-family:inherit}
+.search input::placeholder{color:rgba(255,255,255,.8)}
+.search svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2.2;flex:none}
+.search:focus-within{background:rgba(255,255,255,.12)}
+
+/* ── ผลลัพธ์ ── */
+main{max-width:var(--wrap);margin:0 auto;padding:6px var(--gut) 60px;min-height:calc(100vh - 160px)}
+.brandbar{display:flex;gap:8px;overflow-x:auto;padding:6px 2px 12px;scrollbar-width:thin}
+.brandbar[hidden]{display:none}
+.chip{all:unset;cursor:pointer;flex:none;padding:6px 14px;border-radius:999px;border:1.5px solid #cfcfcf;color:#555;font-size:14px;font-weight:500;white-space:nowrap}
+.chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.chip:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.countline{font-size:13px;color:var(--muted);margin:2px 4px 10px}
+.status{text-align:center;color:#777;padding:48px 12px;font-size:clamp(15px,2.4vw,19px)}
+.status b{display:block;font-size:1.15em;color:#444;margin-bottom:6px}
+.status button{margin-top:14px;padding:8px 20px;border-radius:999px;border:0;background:var(--blue);color:#fff;font:600 15px "Noto Sans Thai",sans-serif;cursor:pointer}
+.status .cfg{display:inline-block;margin-top:10px;font-size:13px;color:#b04a00;background:#fff4e6;padding:8px 12px;border-radius:8px}
+
+/* ── การ์ดสินค้า (1 สเปค = 1 การ์ด) ── */
+.cards{display:flex;flex-direction:column;gap:12px}
+.card{display:grid;grid-template-columns:clamp(110px,17vw,190px) 1fr;gap:clamp(12px,2.6vw,28px);padding:clamp(12px,2.6vw,28px);background:var(--card);border-radius:clamp(22px,3.4vw,42px);content-visibility:auto;contain-intrinsic-size:auto 300px}
+.mediacol{display:flex;flex-direction:column;gap:8px;align-self:start;min-width:0}
+.media{display:flex;align-items:center;justify-content:center;aspect-ratio:180/220;border-radius:12px;overflow:hidden;background:#f1f1f1}
+.colors{display:flex;flex-wrap:wrap;justify-content:center;gap:5px}
+.cchip{display:inline-flex;align-items:center;gap:5px;max-width:100%;background:#fff;border-radius:999px;padding:3px 9px 3px 5px;font-size:11.5px;line-height:1.3;color:#555}
+.cchip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dot{flex:none;width:13px;height:13px;border-radius:50%;border:1px solid rgba(0,0,0,.22);box-shadow:inset 0 0 0 1px rgba(255,255,255,.35)}
+.cchip.nodot{padding-left:9px}
+.media img{width:100%;height:100%;object-fit:contain;display:block}
+.media svg{width:46%;height:auto;opacity:.35}
+.body{min-width:0}
+.title{margin:0 0 clamp(6px,1.4vw,12px);font-weight:600;font-size:clamp(20px,4.2vw,40px);line-height:1.15;color:#444;word-break:break-word}
+.title small{font-size:.62em;font-weight:400;color:#555;margin-left:.2em;white-space:nowrap}
+.pricebadge{display:none}
+.tcap{display:none}
+.tw{border:1.5px solid var(--th);border-radius:14px;overflow-x:auto;overflow-y:hidden;background:#fff;-webkit-overflow-scrolling:touch}
+table.pt{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.pt th{background:var(--th);color:#fff;font-weight:500;font-size:clamp(10.5px,1.55vw,15px);padding:clamp(6px,1.1vw,10px) 4px;text-align:center;white-space:nowrap}
+.pt td{text-align:center;font-size:clamp(11px,1.9vw,18.5px);padding:clamp(4px,.9vw,6px) 3px;white-space:nowrap}
+.pt tbody tr:first-child td{padding-top:clamp(8px,1.4vw,14px)}
+.pt tbody tr:last-child td{padding-bottom:clamp(8px,1.4vw,14px)}
+.pt td.price{font-size:clamp(14px,2.6vw,26px);font-weight:500;vertical-align:middle}
+.pt td.down{text-align:left;white-space:nowrap;padding-left:clamp(4px,1.2vw,14px)}
+.pct{display:inline-block;min-width:2.5em;margin-right:6px;padding:0 5px;border-radius:5px;background:#8d8d8d;color:#fff;font-size:.56em;font-weight:600;line-height:1.5;text-align:center;vertical-align:.18em}
+.pt td.m{color:#333}
+.dash{color:#aaa}
+#more{height:1px}
+
+/* ── มือถือ ── */
+@media (max-width:640px){
+  :root{--logoH:52px}
+  .logobar .wrap{height:52px}
+  .logobar img{height:38px}
+  .card{grid-template-columns:78px 1fr;grid-template-areas:"media head" "media colors" "cap cap" "tbl tbl";row-gap:10px;column-gap:12px}
+  .card.nc{grid-template-areas:"media head" "cap cap" "tbl tbl"}
+  .mediacol{display:contents}
+  .card .media{grid-area:media;aspect-ratio:1/1.15;align-self:start}
+  .card .colors{grid-area:colors;justify-content:flex-start;align-self:start;gap:4px}
+  .cchip{font-size:11px;padding:2px 8px 2px 4px}
+  .card .body{display:contents}
+  .card .head{grid-area:head;align-self:center;min-width:0}
+  .card .tcap{display:block;grid-area:cap;font-size:11.5px;color:#666;margin:2px 4px -4px}
+  .card .tw{grid-area:tbl}
+  .pt th .u{display:none}
+  .pt th{font-size:11.5px}
+  .title{font-size:19px;margin-bottom:4px}
+  .pricebadge{display:inline-block;background:#fff;border-radius:999px;padding:3px 12px;font-size:13px;color:#555}
+  .pricebadge b{font-size:16px;color:#222;margin-left:4px;font-weight:600}
+  .pt th.c-price,.pt td.price{display:none}
+  .pt th{padding:6px 1px}
+  .pt td{font-size:11.5px;padding:4px 0}
+  .pt td.down{padding-left:5px;text-align:left}
+  .pct{font-size:.68em;margin-right:3px;min-width:2.3em;padding:0 3px}
+  .bluebar{border-radius:22px}
+  .compact-nav{padding:8px var(--gut)}
+  .pillsel{height:40px;gap:6px}
+  .pillsel svg{width:20px;height:20px}
+  .bluebar{gap:6px}
+  .bp{padding:0 9px;height:24px}
+  .bp.vat{padding:0 14px}
+  .tile .box{border-radius:10px}
+}
+@media (min-width:641px){ .card .head{display:block} }
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="logobar" id="logobar"><div class="wrap">
+  <img src="images/Logo.png" alt="ศรีสวัสดิ์ LEASING">
+</div></header>
+
+<!-- แบนเนอร์: images/Banner.jpg -->
+<section class="hero" aria-label="โปรโมชั่น">
+  <img src="images/Banner.jpg" alt="ผ่อนมือถือด้วยบัตรประชาชนใบเดียว ต้องมาที่..เอส ลีสซิ่ง ผ่อนนานสูงสุด 24 เดือน" onerror="this.parentNode.style.display='none'">
+</section>
+
+<section class="tiles" id="tiles" aria-label="เลือกผลิตภัณฑ์">
+  <button class="tile" data-p="apple" type="button" aria-pressed="false">
+    <span class="box"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg></span>
+    <span class="cap">( ผลิตภัณฑ์ Apple )</span>
+  </button>
+  <button class="tile" data-p="android" type="button" aria-pressed="false">
+    <span class="box"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993.0004.5511-.4482.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m11.4045-6.02l1.9973-3.4592a.416.416 0 00-.1521-.5676.416.416 0 00-.5676.1521l-2.0223 3.503C15.5902 8.2439 13.8533 7.8508 12 7.8508s-3.5902.3931-5.1367 1.0989L4.841 5.4467a.4161.4161 0 00-.5677-.1521.4157.4157 0 00-.1521.5676l1.9973 3.4592C2.6889 11.1867.3432 14.6589 0 18.761h24c-.3435-4.1021-2.6892-7.5743-6.1185-9.4396"/></svg></span>
+    <span class="cap">( ผลิตภัณฑ์ Android )</span>
+  </button>
+</section>
+
+<div id="sentinel" aria-hidden="true"></div>
+
+<div class="stickybar" id="stickybar">
+  <div class="compact-nav" id="compactNav">
+    <button class="pillsel" data-p="apple" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>( ผลิตภัณฑ์ Apple )</button>
+    <button class="pillsel" data-p="android" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993.0004.5511-.4482.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m11.4045-6.02l1.9973-3.4592a.416.416 0 00-.1521-.5676.416.416 0 00-.5676.1521l-2.0223 3.503C15.5902 8.2439 13.8533 7.8508 12 7.8508s-3.5902.3931-5.1367 1.0989L4.841 5.4467a.4161.4161 0 00-.5677-.1521.4157.4157 0 00-.1521.5676l1.9973 3.4592C2.6889 11.1867.3432 14.6589 0 18.761h24c-.3435-4.1021-2.6892-7.5743-6.1185-9.4396"/></svg>( ผลิตภัณฑ์ Android )</button>
+  </div>
+  <div class="bluebar">
+    <span class="bp vat">Vat</span>
+    <span class="bp">*1.15%</span>
+    <span class="bp">ประกันอุบัติเหตุ</span>
+    <label class="search">
+      <input id="q" type="search" inputmode="search" enterkeyhint="search" autocomplete="off" placeholder="ใส่ชื่อรุ่น" aria-label="ค้นหาชื่อรุ่น">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg>
+    </label>
+  </div>
+</div>
+
+<main id="results">
+  <div class="brandbar" id="brandbar" hidden></div>
+  <div class="countline" id="countline" hidden></div>
+  <div class="cards" id="cards"></div>
+  <div class="status" id="status"></div>
+  <div id="more"></div>
+</main>
+
+<script>
+(function () {
+'use strict';
+
+/* ════════ ตั้งค่า ════════
+   url = ลิงก์ CSV จาก Google Sheets: File → Share → Publish to web → เลือกแท็บ → รูปแบบ CSV
+   คอลัมน์ใช้ตัวอักษรตามชีต (A, B, ... AA, AB ...)                                      */
+var SHEETS = {
+  apple: {
+    label: 'Apple',
+    url: 'ใส่ลิงก์ CSV ของชีต Apple',
+    nameCol: 'B', priceCol: 'C', imageCol: 'A',   // คอลัมน์ A = ชื่อไฟล์รูป (เช่น 1 → 1.jpg)
+    colors: { start: 'BH', pairs: 5 },            // สี: [รหัสสี, ชื่อสี] × 5 เริ่มที่คอลัมน์ BH (BH–BQ)
+    terms: [6, 9, 12, 15, 18, 24],
+    blocks: [ // pct = % เงินดาวน์ | down = คอลัมน์เงินดาวน์ | inst = คอลัมน์ค่างวดแรก (งวดที่ 6)
+      { pct: 15, down: 'F',  inst: 'I'  },
+      { pct: 20, down: 'O',  inst: 'R'  },
+      { pct: 25, down: 'X',  inst: 'AA' },
+      { pct: 35, down: 'AP', inst: 'AS' },
+      { pct: 40, down: 'AY', inst: 'BB' }
+    ]
+  },
+  android: {
+    label: 'Android',
+    url: 'ใส่ลิงก์ CSV ของชีต Android',
+    nameCol: 'A', priceCol: 'B', imageCol: 'C',   // คอลัมน์ C = image link (เช่น 161 → 161.jpg)
+    colors: { start: 'BH', pairs: 5 },            // สี: BH–BQ
+    terms: [6, 9, 12, 15, 18],
+    blocks: [
+      { pct: 15, down: 'F',  inst: 'I'  },
+      { pct: 20, down: 'O',  inst: 'R'  },
+      { pct: 25, down: 'X',  inst: 'AA' },
+      { pct: 35, down: 'AG', inst: 'AJ' },
+      { pct: 40, down: 'AP', inst: 'AS' }
+    ]
+  }
+};
+/* ชื่อไฟล์รูป: Apple = ค่าในคอลัมน์ A | Android = ค่าในคอลัมน์ image link (ถ้าว่าง ใช้ชื่อรุ่นแทน) */
+var IMAGE_BASE = 'images/';           // โฟลเดอร์รูป: images/apple/ และ images/android/
+var IMAGE_EXT  = ['jpg', 'png', 'webp']; // ลองนามสกุลตามลำดับ (ปกติใช้ .jpg)
+var CHUNK = 20;
+
+/* ════════ ตัวช่วย ════════ */
+function colIdx(L) { var n = 0; for (var i = 0; i < L.length; i++) n = n * 26 + (L.charCodeAt(i) - 64); return n - 1; }
+function parseCSV(text) {
+  var rows = [], row = [], cur = '', q = false;
+  for (var i = 0; i < text.length; i++) {
+    var c = text[i];
+    if (q) {
+      if (c === '"') { if (text[i + 1] === '"') { cur += '"'; i++; } else q = false; }
+      else cur += c;
+    } else if (c === '"') q = true;
+    else if (c === ',') { row.push(cur); cur = ''; }
+    else if (c === '\n') { row.push(cur); rows.push(row); row = []; cur = ''; }
+    else if (c !== '\r') cur += c;
+  }
+  if (cur !== '' || row.length) { row.push(cur); rows.push(row); }
+  return rows;
+}
+function num(s) {
+  if (s == null) return null;
+  s = String(s).replace(/[,\s฿]/g, '');
+  return /^-?\d+(\.\d+)?$/.test(s) ? Number(s) : null;
+}
+function fmt(n) { return n == null ? '<span class="dash">-</span>' : Math.round(n).toLocaleString('en-US'); }
+function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
+function cleanKey(v) {
+  v = String(v || '').trim();
+  if (/^\d+\.0+$/.test(v)) v = v.replace(/\.0+$/, '');
+  return v.replace(/\.(jpe?g|png|webp)$/i, '');
+}
+function normColor(c) {
+  c = String(c || '').trim();
+  if (!c) return '';
+  if (/^#?([0-9a-f]{3}|[0-9a-f]{6})$/i.test(c)) return c.charAt(0) === '#' ? c : '#' + c;
+  return (window.CSS && CSS.supports && CSS.supports('color', c)) ? c : '';
+}
+function splitName(name, key) {
+  var n = name.replace(/\s+/g, ' ').trim();
+  if (key === 'apple') n = n.replace(/^apple\s+/i, '');
+  var m = n.match(/^(.*?)\s*\(?\b(\d+\s*\/\s*\d+\s*(?:GB|TB)?(?:\s*GB)?|\d+(?:\.\d+)?\s*(?:GB|TB))\)?\s*$/i);
+  if (!m || !m[1]) return { title: n, spec: '' };
+  var spec = m[2].replace(/\s+/g, ' ').trim();
+  if (/^\d+\s*\/\s*\d+$/.test(spec)) spec += ' GB';
+  spec = spec.replace(/TB GB$/i, 'TB');
+  return { title: m[1].trim(), spec: spec };
+}
+
+function parseSheet(csv, key) {
+  var cfg = SHEETS[key], rows = parseCSV(csv), out = [];
+  var iN = colIdx(cfg.nameCol), iP = colIdx(cfg.priceCol), iI = cfg.imageCol ? colIdx(cfg.imageCol) : -1;
+  rows.forEach(function (r) {
+    var name = (r[iN] || '').replace(/\s+/g, ' ').trim();
+    var price = num(r[iP]);
+    if (!name || price == null || price <= 0) return;      // ข้ามหัวตาราง/แถวว่าง
+    if (name.charAt(0) === '*') return;                    // * = รุ่นที่ยังไม่วางขาย
+    var plans = cfg.blocks.map(function (b) {
+      var i0 = colIdx(b.inst);
+      return {
+        pct: b.pct,
+        down: num(r[colIdx(b.down)]),
+        inst: cfg.terms.map(function (t, k) { return num(r[i0 + k]); })
+      };
+    });
+    var sp = splitName(name, key);
+    var colors = [];
+    if (cfg.colors) {
+      var c0 = colIdx(cfg.colors.start);
+      for (var k = 0; k < cfg.colors.pairs; k++) {
+        var code = r[c0 + k * 2], cname = (r[c0 + k * 2 + 1] || '').replace(/\s+/g, ' ').trim();
+        var hex = normColor(code);
+        if (hex || cname) colors.push({ hex: hex, name: cname });
+      }
+    }
+    out.push({
+      key: key, name: name, title: sp.title, spec: sp.spec, price: price, plans: plans, colors: colors,
+      brand: key === 'android' ? name.split(' ')[0].toUpperCase() : 'APPLE',
+      imageKey: iI >= 0 ? cleanKey(r[iI]) : '',
+      hay: name.toLowerCase(), hayNS: name.toLowerCase().replace(/\s+/g, '')
+    });
+  });
+  return out;
+}
+
+/* ════════ สถานะ ════════ */
+var $ = function (id) { return document.getElementById(id); };
+var state = { platform: null, brand: '', q: '', data: {}, err: {}, loading: {}, list: [], shown: 0 };
+var cardsEl = $('cards'), statusEl = $('status'), brandEl = $('brandbar'), countEl = $('countline');
+
+function configured(key) { return /^https?:\/\//i.test(SHEETS[key].url); }
+
+function load(key) {
+  var cfg = SHEETS[key];
+  state.err[key] = null;
+  if (!configured(key)) { state.err[key] = 'cfg'; state.loading[key] = false; return Promise.resolve(); }
+  state.loading[key] = true;
+  return fetch(cfg.url).then(function (r) {
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.text();
+  }).then(function (t) {
+    state.data[key] = parseSheet(t, key);
+    if (!state.data[key].length) throw new Error('empty');
+  }).catch(function (e) {
+    state.err[key] = 'load';
+  }).then(function () { state.loading[key] = false; });
+}
+
+/* ════════ การ์ด ════════ */
+var PH = '<svg viewBox="0 0 24 24" fill="none" stroke="#777" stroke-width="1.4" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.2"/><path d="M10.5 5h3M11 19h2" stroke-linecap="round"/></svg>';
+function slug(s) { return s.toLowerCase().replace(/[^a-z0-9ก-๙]+/g, '-').replace(/^-+|-+$/g, ''); }
+function imgBase(it) {
+  var k = it.imageKey || (it.key === 'android' ? slug(it.name) : slug(it.title));
+  return IMAGE_BASE + it.key + '/' + encodeURIComponent(k);
+}
+window.imgFail = function (el) {
+  var i = (+el.getAttribute('data-i')) + 1, b = el.getAttribute('data-b');
+  if (i < IMAGE_EXT.length) { el.setAttribute('data-i', i); el.src = b + '.' + IMAGE_EXT[i]; return; }
+  if (window.console) console.info('ไม่พบรูป:', b + '.' + IMAGE_EXT[0]);
+  el.outerHTML = PH;
+};
+function cardHTML(it) {
+  var terms = SHEETS[it.key].terms;
+  var b = imgBase(it);
+  var media = '<img src="' + esc(b + '.' + IMAGE_EXT[0]) + '" data-b="' + esc(b) + '" data-i="0" alt="' + esc(it.title) + '" loading="lazy" decoding="async" onerror="imgFail(this)">';
+  var head = '<th class="c-price">ราคา</th><th>เงินดาวน์</th>' + terms.map(function (t) { return '<th>' + t + '<span class="u"> เดือน</span></th>'; }).join('');
+  var body = it.plans.map(function (p, i) {
+    return '<tr>' + (i === 0 ? '<td class="price" rowspan="' + it.plans.length + '">' + Math.round(it.price).toLocaleString('en-US') + '</td>' : '') +
+      '<td class="down"><span class="pct">' + p.pct + '%</span>' + fmt(p.down) + '</td>' +
+      p.inst.map(function (v) { return '<td class="m">' + fmt(v) + '</td>'; }).join('') + '</tr>';
+  }).join('');
+  var cols = it.colors.length ? '<div class="colors">' + it.colors.map(function (c) {
+    return '<span class="cchip' + (c.hex ? '' : ' nodot') + '"' + (c.name ? ' title="' + esc(c.name) + '"' : '') + '>' +
+      (c.hex ? '<i class="dot" style="background:' + esc(c.hex) + '"></i>' : '') + (c.name ? '<span>' + esc(c.name) + '</span>' : '') + '</span>';
+  }).join('') + '</div>' : '';
+  return '<article class="card' + (it.colors.length ? '' : ' nc') + '"><div class="mediacol"><div class="media">' + media + '</div>' + cols + '</div><div class="body"><div class="head">' +
+    '<h3 class="title">' + esc(it.title) + (it.spec ? ' <small>(' + esc(it.spec) + ')</small>' : '') + '</h3>' +
+    '<span class="pricebadge">ราคา <b>' + Math.round(it.price).toLocaleString('en-US') + '</b></span></div>' +
+    '<div class="tcap">ค่างวด (บาท/เดือน) ตามจำนวนงวดที่ผ่อน</div><div class="tw"><table class="pt"><thead><tr>' + head + '</tr></thead><tbody>' + body + '</tbody></table></div></div></article>';
+}
+
+function appendChunk() {
+  if (state.shown >= state.list.length) return;
+  var end = Math.min(state.shown + CHUNK, state.list.length);
+  var html = '';
+  for (var i = state.shown; i < end; i++) html += cardHTML(state.list[i]);
+  cardsEl.insertAdjacentHTML('beforeend', html);
+  state.shown = end;
+}
+var io = ('IntersectionObserver' in window) ? new IntersectionObserver(function (es) {
+  if (es[0].isIntersecting) { appendChunk(); }
+}, { rootMargin: '900px 0px' }) : null;
+if (io) io.observe($('more'));
+
+/* ════════ กรอง + แสดงผล ════════ */
+function filtered() {
+  var q = state.q.trim().toLowerCase();
+  var src;
+  if (state.platform) src = state.data[state.platform] || [];
+  else if (q) src = (state.data.apple || []).concat(state.data.android || []);
+  else return null;
+  if (state.platform === 'android' && state.brand) src = src.filter(function (x) { return x.brand === state.brand; });
+  if (q) {
+    var toks = q.split(/\s+/).filter(Boolean);
+    src = src.filter(function (x) {
+      return toks.every(function (t) { return x.hay.indexOf(t) >= 0 || x.hayNS.indexOf(t) >= 0; });
+    });
+  }
+  return src;
+}
+function setStatus(html) { statusEl.innerHTML = html; statusEl.hidden = !html; }
+
+function render() {
+  cardsEl.innerHTML = ''; state.shown = 0; state.list = [];
+  var keys = state.platform ? [state.platform] : ['apple', 'android'];
+  buildBrands();
+  var list = filtered();
+  countEl.hidden = true;
+
+  if (list === null) {                                   // ยังไม่เลือกผลิตภัณฑ์
+    var allLoading = keys.some(function (k) { return state.loading[k]; });
+    setStatus('<b>เลือกผลิตภัณฑ์ที่ต้องการดูราคา</b>กดที่ Apple หรือ Android ด้านบน' + (allLoading ? '<br><small>กำลังโหลดข้อมูลราคา…</small>' : ''));
+    return;
+  }
+  var errKey = state.platform && state.err[state.platform];
+  if (state.platform && state.loading[state.platform]) { setStatus('<b>กำลังโหลดข้อมูลราคา…</b>'); return; }
+  if (errKey === 'cfg') { setStatus('<b>ยังไม่ได้ตั้งค่าลิงก์ข้อมูล</b><span class="cfg">ใส่ลิงก์ CSV ของ ' + SHEETS[state.platform].label + ' ใน SHEETS.' + state.platform + '.url</span>'); return; }
+  if (errKey === 'load') { setStatus('<b>โหลดข้อมูลราคาไม่สำเร็จ</b>ตรวจสอบอินเทอร์เน็ตแล้วลองใหม่อีกครั้ง<br><button type="button" id="retry">ลองใหม่</button>'); $('retry').onclick = function () { load(state.platform).then(render); render(); }; return; }
+  if (!list.length) { setStatus('<b>ไม่พบรุ่นที่ค้นหา</b>ลองพิมพ์ชื่อรุ่นให้สั้นลง เช่น “iPhone 15” หรือ “A57”'); return; }
+
+  setStatus('');
+  state.list = list;
+  countEl.textContent = (state.platform ? SHEETS[state.platform].label + ' · ' : '') + 'พบ ' + list.length.toLocaleString('en-US') + ' รายการ';
+  countEl.hidden = false;
+  appendChunk();
+}
+
+function buildBrands() {
+  var show = state.platform === 'android' && state.data.android;
+  brandEl.hidden = !show;
+  if (!show) return;
+  var seen = [], items = state.data.android;
+  items.forEach(function (x) { if (seen.indexOf(x.brand) < 0) seen.push(x.brand); });
+  brandEl.innerHTML = ['<button class="chip' + (state.brand ? '' : ' on') + '" data-b="" type="button">ทั้งหมด</button>']
+    .concat(seen.map(function (b) { return '<button class="chip' + (state.brand === b ? ' on' : '') + '" data-b="' + esc(b) + '" type="button">' + esc(b) + '</button>'; })).join('');
+}
+brandEl.addEventListener('click', function (e) {
+  var b = e.target.closest('.chip'); if (!b) return;
+  state.brand = b.getAttribute('data-b'); render();
+});
+
+/* ════════ เลือกผลิตภัณฑ์ / ค้นหา ════════ */
+function scrollToResults() {
+  var top = $('sentinel').getBoundingClientRect().top + window.pageYOffset - $('logobar').offsetHeight + 1;
+  window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+}
+function select(key, fromHash) {
+  if (state.platform !== key) state.brand = '';
+  state.platform = key;
+  document.querySelectorAll('[data-p]').forEach(function (el) {
+    var on = el.getAttribute('data-p') === key;
+    el.classList.toggle('on', on); el.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+  try { history.replaceState(null, '', '#' + key); } catch (e) {}
+  render();
+  if (!fromHash) scrollToResults();
+}
+document.querySelectorAll('[data-p]').forEach(function (el) {
+  el.addEventListener('click', function () { select(el.getAttribute('data-p')); });
+});
+
+var qEl = $('q'), t = null;
+qEl.addEventListener('input', function () {
+  clearTimeout(t);
+  t = setTimeout(function () {
+    var had = state.q.trim(); state.q = qEl.value;
+    render();
+    if (!state.platform && !had && qEl.value.trim() && !document.body.classList.contains('compact')) scrollToResults();
+  }, 120);
+});
+qEl.addEventListener('keydown', function (e) { if (e.key === 'Enter') qEl.blur(); });
+
+/* ════════ เมนูย่อเมื่อเลื่อนลง ════════ */
+var ticking = false;
+function updateCompact() {
+  ticking = false;
+  var h = $('logobar').offsetHeight;
+  document.documentElement.style.setProperty('--logoH', h + 'px');
+  document.body.classList.toggle('compact', $('sentinel').getBoundingClientRect().top <= h + 1);
+}
+function onScroll() { if (!ticking) { ticking = true; requestAnimationFrame(updateCompact); } }
+window.addEventListener('scroll', onScroll, { passive: true });
+window.addEventListener('resize', onScroll);
+updateCompact();
+
+/* ════════ เริ่มต้น ════════ */
+var pending = Promise.all([load('apple'), load('android')]);
+render();
+pending.then(render);
+var h0 = (location.hash || '').replace('#', '');
+if (h0 === 'apple' || h0 === 'android') { select(h0, true); }
+})();
+</script>
+</body>
+</html>
