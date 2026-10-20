@@ -113,6 +113,13 @@ table.pt{table-layout:fixed}
 /* ── มือถือ ── */
 @media (max-width:640px){
   :root{--logoH:52px}
+  /* แถบน้ำเงิน: มือถืออยู่บรรทัดเดียว (Vat / *1.15% / ประกันอุบัติเหตุ / ช่องค้นหา) */
+  .bluebar{flex-wrap:nowrap;gap:4px;padding:5px 6px}
+  .bp{height:24px;padding:0 8px;font-size:11px;flex:none}
+  .bp.vat{padding:0 11px}
+  .search{flex:1 1 0;min-width:0;max-width:none;margin-left:0;height:26px;padding:0 7px 0 9px;gap:4px}
+  .search input{font-size:12px}
+  .search svg{width:15px;height:15px}
   .logobar .wrap{height:52px}
   .logobar img{height:38px}
   .card{grid-template-columns:78px 1fr;grid-template-areas:"media head" "media colors" "cap cap" "tbl tbl";row-gap:10px;column-gap:12px}
