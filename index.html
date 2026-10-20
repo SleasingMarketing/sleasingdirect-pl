@@ -102,7 +102,8 @@ table.pt{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
 /* คอลัมน์เท่ากัน: ราคา/เงินดาวน์ กำหนดความกว้างคงที่ ที่เหลือแบ่งเท่ากันทุกงวด */
 table.pt{table-layout:fixed}
 .pt th.c-price{width:15%}
-.pt th.c-down{width:22%;text-align:left;padding-left:clamp(4px,1.2vw,14px)}
+/* กว้างพอดีกับ "ป้าย% + เงินดาวน์ 6 หลัก" ตามขนาดตัวอักษรของตาราง (ไม่ให้เหลือที่ว่างหลังตัวเลข) */
+.pt th.c-down{width:calc(clamp(11px,1.9vw,18.5px)*6.2);text-align:left;padding-left:clamp(4px,1.2vw,14px)}
 .pt td{overflow:hidden}
 .dash{color:#aaa}
 #more{height:1px}
@@ -128,7 +129,7 @@ table.pt{table-layout:fixed}
   .pricebadge{display:inline-block;background:#fff;border-radius:999px;padding:3px 12px;font-size:13px;color:#555}
   .pricebadge b{font-size:16px;color:#222;margin-left:4px;font-weight:600}
   .pt th.c-price,.pt td.price{display:none}
-  .pt th.c-down{width:27%;padding-left:5px}
+  .pt th.c-down{width:22%;padding-left:5px}
   .pt td.m{font-size:11px}
   .pt th{padding:6px 1px}
   .pt td{font-size:11.5px;padding:4px 0}
