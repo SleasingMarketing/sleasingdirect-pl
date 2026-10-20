@@ -11,6 +11,7 @@
 :root{
   --blue:#1f4a98; --blue-dark:#183b7a; --green:#3ddc84; --vat1:#5aae1f; --vat2:#8bd23a;
   --ink:#2b2b2b; --muted:#8a8a8a; --card:#e6e6e6; --th:#4d4d4d; --line:#e3e3e3;
+  --insfs:clamp(9px,1.2vw,12px);
   --wrap:1190px; --gut:clamp(12px,4vw,47px); --logoH:64px;
 }
 *{box-sizing:border-box}
@@ -113,8 +114,8 @@ table.pt{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
 .pt td{text-align:center;font-size:clamp(11px,1.9vw,18.5px);padding:clamp(4px,.9vw,6px) 3px;white-space:nowrap}
 .pt tbody tr:first-child td{padding-top:clamp(8px,1.4vw,14px)}
 .pt tbody tr:last-child td{padding-bottom:clamp(8px,1.4vw,14px)}
-.pt td.price{font-size:clamp(14px,2.6vw,26px);font-weight:500;vertical-align:middle;white-space:normal}
-.pt td.price .ins{display:block;margin-top:3px;font-size:clamp(9px,1.2vw,12px);font-weight:400;color:#555;line-height:1.3}
+.pt td.price{font-size:clamp(18px,calc(2.6vw + 4px),30px);font-weight:500;vertical-align:middle;white-space:normal}
+.pt td.price .ins{display:block;margin-top:3px;font-size:var(--insfs);font-weight:400;color:#555;line-height:1.3}
 .insnote{display:none}
 .pt td.down{text-align:left;white-space:nowrap;padding-left:clamp(4px,1.2vw,14px)}
 .pct{display:inline-block;min-width:2.5em;margin-right:6px;padding:0 5px;border-radius:5px;background:#8d8d8d;color:#fff;font-size:.56em;font-weight:600;line-height:1.5;text-align:center;vertical-align:.18em}
@@ -122,6 +123,12 @@ table.pt{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
 /* คอลัมน์เท่ากัน: ราคา/เงินดาวน์ กำหนดความกว้างคงที่ ที่เหลือแบ่งเท่ากันทุกงวด */
 table.pt{table-layout:fixed}
 .pt th.c-price{width:15%}
+/* จอกว้าง: ขยายคอลัมน์ราคาให้ประโยค "+ ประกันตัวเครื่อง x,xxx .–" อยู่บรรทัดเดียว (เงินดาวน์จึงขยับไปทางขวา) */
+@media (min-width:641px) and (max-width:899px){ .pt th.c-price{width:21%} }   /* แท็บเล็ต: เผื่อที่ให้ราคาตัวใหญ่ */
+@media (min-width:900px){
+  .pt th.c-price{width:calc(var(--insfs)*14 + 14px)}
+  .pt td.price .ins{white-space:nowrap}
+}
 /* กว้างพอดีกับ "ป้าย% + เงินดาวน์ 6 หลัก" ตามขนาดตัวอักษรของตาราง (ไม่ให้เหลือที่ว่างหลังตัวเลข) */
 .pt th.c-down{width:calc(clamp(11px,1.9vw,18.5px)*6.2);text-align:left;padding-left:clamp(4px,1.2vw,14px)}
 .pt td{overflow:hidden}
