@@ -80,6 +80,10 @@ main{max-width:var(--wrap);margin:0 auto;padding:6px var(--gut) 60px;min-height:
 .cchip.nodot{padding-left:9px}
 .media img{width:100%;height:100%;object-fit:contain;display:block}
 .media svg{width:46%;height:auto;opacity:.35}
+.media img{cursor:zoom-in}
+.lb{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:clamp(12px,4vw,40px);background:rgba(0,0,0,.74);cursor:zoom-out;-webkit-tap-highlight-color:transparent}
+.lb[hidden]{display:none}
+.lb img{max-width:100%;max-height:100%;object-fit:contain;border-radius:14px;background:#fff;box-shadow:0 12px 40px rgba(0,0,0,.45)}
 .body{min-width:0}
 .title{margin:0 0 clamp(6px,1.4vw,12px);font-weight:600;font-size:clamp(20px,4.2vw,40px);line-height:1.15;color:#444;word-break:break-word}
 .title small{font-size:.62em;font-weight:400;color:#555;margin-left:.2em;white-space:nowrap}
@@ -95,6 +99,11 @@ table.pt{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
 .pt td.down{text-align:left;white-space:nowrap;padding-left:clamp(4px,1.2vw,14px)}
 .pct{display:inline-block;min-width:2.5em;margin-right:6px;padding:0 5px;border-radius:5px;background:#8d8d8d;color:#fff;font-size:.56em;font-weight:600;line-height:1.5;text-align:center;vertical-align:.18em}
 .pt td.m{color:#333}
+/* คอลัมน์เท่ากัน: ราคา/เงินดาวน์ กำหนดความกว้างคงที่ ที่เหลือแบ่งเท่ากันทุกงวด */
+table.pt{table-layout:fixed}
+.pt th.c-price{width:15%}
+.pt th.c-down{width:22%;text-align:left;padding-left:clamp(4px,1.2vw,14px)}
+.pt td{overflow:hidden}
 .dash{color:#aaa}
 #more{height:1px}
 
@@ -119,6 +128,8 @@ table.pt{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
   .pricebadge{display:inline-block;background:#fff;border-radius:999px;padding:3px 12px;font-size:13px;color:#555}
   .pricebadge b{font-size:16px;color:#222;margin-left:4px;font-weight:600}
   .pt th.c-price,.pt td.price{display:none}
+  .pt th.c-down{width:27%;padding-left:5px}
+  .pt td.m{font-size:11px}
   .pt th{padding:6px 1px}
   .pt td{font-size:11.5px;padding:4px 0}
   .pt td.down{padding-left:5px;text-align:left}
@@ -184,6 +195,7 @@ table.pt{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
   <div id="more"></div>
 </main>
 
+<div class="lb" id="lightbox" role="dialog" aria-modal="true" aria-label="ดูรูปขยาย" hidden><img alt=""></div>
 <script>
 (function () {
 'use strict';
@@ -351,7 +363,7 @@ function cardHTML(it) {
   var terms = SHEETS[it.key].terms;
   var b = imgBase(it);
   var media = '<img src="' + esc(b + '.' + IMAGE_EXT[0]) + '" data-b="' + esc(b) + '" data-i="0" alt="' + esc(it.title) + '" loading="lazy" decoding="async" onerror="imgFail(this)">';
-  var head = '<th class="c-price">ราคา</th><th>เงินดาวน์</th>' + terms.map(function (t) { return '<th>' + t + '<span class="u"> เดือน</span></th>'; }).join('');
+  var head = '<th class="c-price">ราคา</th><th class="c-down">เงินดาวน์</th>' + terms.map(function (t) { return '<th>' + t + '<span class="u"> เดือน</span></th>'; }).join('');
   var body = it.plans.map(function (p, i) {
     return '<tr>' + (i === 0 ? '<td class="price" rowspan="' + it.plans.length + '">' + Math.round(it.price).toLocaleString('en-US') + '</td>' : '') +
       '<td class="down"><span class="pct">' + p.pct + '%</span>' + fmt(p.down) + '</td>' +
@@ -435,6 +447,17 @@ brandEl.addEventListener('click', function (e) {
   var b = e.target.closest('.chip'); if (!b) return;
   state.brand = b.getAttribute('data-b'); render();
 });
+
+/* ════════ ดูรูปขยาย (pop-up) ════════ */
+var lb = $('lightbox'), lbImg = lb.querySelector('img');
+function closeLb() { lb.hidden = true; lbImg.removeAttribute('src'); document.body.style.overflow = ''; }
+function openLb(src, alt) { lbImg.src = src; lbImg.alt = alt || ''; lb.hidden = false; document.body.style.overflow = 'hidden'; }
+cardsEl.addEventListener('click', function (e) {
+  var im = e.target.closest ? e.target.closest('.media img') : null;
+  if (im) openLb(im.currentSrc || im.src, im.alt);
+});
+lb.addEventListener('click', closeLb);                       // กดที่รูป (หรือพื้นหลัง) ซ้ำ = ปิด
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !lb.hidden) closeLb(); });
 
 /* ════════ เลือกผลิตภัณฑ์ / ค้นหา ════════ */
 function scrollToResults() {
