@@ -164,11 +164,11 @@ table.pt{table-layout:fixed}
   .pricebadge b{font-size:16px;color:#222;margin-left:4px;font-weight:600}
   .insnote{display:block;margin:4px 0 0 4px;font-size:11px;color:#666;line-height:1.3}
   .pt th.c-price,.pt td.price{display:none}
-  .pt th.c-down{width:22%;padding-left:5px}
+  .pt th.c-down{width:25%;padding-left:11px}
   .pt td.m{font-size:11px}
   .pt th{padding:6px 1px}
   .pt td{font-size:11.5px;padding:4px 0}
-  .pt td.down{padding-left:5px;text-align:left}
+  .pt td.down{padding-left:11px;text-align:left}
   .pct{font-size:.68em;margin-right:3px;min-width:2.3em;padding:0 3px}
   .bluebar{border-radius:22px}
   .compact-nav{padding:8px var(--gut)}
@@ -178,6 +178,15 @@ table.pt{table-layout:fixed}
   .bp{padding:0 9px;height:24px}
   .bp.vat{padding:0 14px}
   .tile .box{border-radius:10px}
+}
+/* มือถือจอเล็ก (≤ 380 px): ลดขนาดตัวเลข/ป้าย % ให้เลขเงินดาวน์ 5 หลักไม่ถูกตัด */
+@media (max-width:380px){
+  .pt td{font-size:10.5px}
+  .pt td.m{font-size:10px}
+  .pt th{font-size:10.5px}
+  .pt th.c-down{padding-left:9px}
+  .pt td.down{padding-left:9px}
+  .pct{font-size:.62em;min-width:2.1em;margin-right:2px;padding:0 2px}
 }
 @media (min-width:641px){ .card .head{display:block} }
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
