@@ -171,7 +171,7 @@ table.pt{table-layout:fixed}
   .pt th{padding:6px 1px}
   .pt td{font-size:11.5px;padding:4px 0}
   .pt td.down{padding-left:11px;text-align:left}
-  .pct{font-size:.68em;margin-right:3px;min-width:2.3em;padding:0 3px}
+  .pct{font-size:.68em;margin-right:3px;min-width:2.3em;padding:.25em 3px 0}
   .bluebar{border-radius:22px}
   .compact-nav{padding:8px var(--gut)}
   .pillsel{height:40px;gap:6px}
@@ -188,10 +188,13 @@ table.pt{table-layout:fixed}
   .pt th{font-size:10.5px}
   .pt th.c-down{padding-left:9px}
   .pt td.down{padding-left:9px}
-  .pct{font-size:.62em;min-width:2.1em;margin-right:2px;padding:0 2px}
+  .pct{font-size:.62em;min-width:2.1em;margin-right:2px;padding:.25em 2px 0}
 }
 @media (min-width:641px){ .card .head{display:block} }
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+/* จัดตัวหนังสือในแถบสีน้ำเงินให้อยู่กึ่งกลางแนวตั้ง (ฟอนต์ไทยเผื่อที่ด้านบนไว้มาก) */
+.bp:nth-child(-n+2){padding-top:.2em!important}
+.search input{padding-top:.2em}
 </style>
 </head>
 <body>
